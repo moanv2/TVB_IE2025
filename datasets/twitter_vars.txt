@@ -1,0 +1,79 @@
+The following variables are real variables scraped from x.
+
+For GDPR and privacy concerns their output has been removed.
+
+# Temporal features
+temporal_features = {
+    "avg_time_between_tweets_seconds": ,
+    "median_time_between_tweets_seconds": ,
+    "tweet_frequency_per_day": ,
+    "most_active_hour": ,
+    "weekend_tweet_ratio": ,
+    "max_tweets_per_hour": ,
+    "avg_tweets_per_active_hour":
+}
+
+# Engagement features
+engagement_features = {
+    "avg_likes_per_tweet": ,
+    "avg_retweets_per_tweet": ,
+    "avg_replies_per_tweet": ,
+    "avg_views_per_tweet": ,
+    "median_likes_per_tweet": ,
+    "median_retweets_per_tweet": ,
+    "pct_tweets_with_media": ,
+    "pct_tweets_with_video": ,
+    "pct_tweets_with_hashtags": ,
+    "pct_tweets_with_urls": ,
+    "pct_retweets": ,
+    "pct_replies": ,
+    "pct_tweets_with_spam_keywords":
+}
+
+# Tweet-level features
+tweet_features = {
+    "tweet_id": ,
+    "username": ,
+    "handle": ,
+    "tweet_text": ,
+    "tweet_url": ,
+    "timestamp": ,
+    "source": ,
+    "lang": ,
+    "reply_count": ,
+    "retweet_count": ,
+    "like_count": ,
+    "view_count": ,
+    "quote_count": ,
+    "bookmark_count": ,
+    "hashtag_count": ,
+    "mention_count": ,
+    "url_count": ,
+    "media_count": ,
+    "text_length": ,
+    "word_count": ,
+    "emoji_count": ,
+    "exclamation_count": ,
+    "question_count": ,
+    "uppercase_ratio": ,
+    "punctuation_ratio": ,
+    "digit_ratio": ,
+    "is_retweet": ,
+    "is_reply": ,
+    "is_quote": ,
+    "has_media": ,
+    "has_video": ,
+    "has_hashtags": ,
+    "has_mentions": ,
+    "has_urls": ,
+    "possibly_sensitive": ,
+    "contains_spam_keywords": ,
+    "hashtags": ,
+    "mentions": ,
+    "urls": ,
+    "hour_of_day": ,
+    "day_of_week": ,
+    "is_weekend": ,
+    "scraped_at":
+}
+
