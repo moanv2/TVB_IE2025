@@ -6,19 +6,25 @@ from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, r
 
 app = FastAPI()
 
-# CORS for React
+# CORS for React - Remove trailing slash
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000/"],  # ADD URL HERE
+    allow_origins=["http://localhost:3000"],  # Fixed: removed trailing slash
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-
 # Load data
 predictions = pd.read_csv('E:/tvb_25/ML_model/bot_human_predictions.csv')
-user_summary = pd.read_csv('user_level_predictions.csv')
+
+# Fix: Handle NaN usernames (they're showing as Float in your CSV)
+predictions['username'] = predictions['username'].fillna('unknown_user').astype(str)
+
+
+@app.get("/")
+def root():
+    return {"message": "Bot Detection API is running", "total_predictions": len(predictions)}
 
 
 @app.get("/api/metrics")
@@ -54,13 +60,14 @@ def get_predictions(limit: int = 100, classification: str = None):
     if classification:
         df = df[df['predicted_class'] == classification]
 
-    return df.head(limit).to_dict(orient='records')
+    # Convert to records and ensure no NaN values
+    return df.head(limit).fillna(0).to_dict(orient='records')
 
 
 @app.get("/api/confidence-distribution")
 def get_confidence_distribution():
-    bot_conf = predictions[predictions['predicted_class'] == 'Bot']['confidence'].tolist()
-    human_conf = predictions[predictions['predicted_class'] == 'Human']['confidence'].tolist()
+    bot_conf = predictions[predictions['predicted_class'] == 'Bot']['confidence'].dropna().tolist()
+    human_conf = predictions[predictions['predicted_class'] == 'Human']['confidence'].dropna().tolist()
 
     return {
         "bots": bot_conf,
@@ -71,21 +78,57 @@ def get_confidence_distribution():
 @app.get("/api/top-bots")
 def get_top_bots(limit: int = 20):
     bots = predictions[predictions['predicted_class'] == 'Bot'].sort_values('confidence', ascending=False).head(limit)
-    return bots[['username', 'confidence', 'bot_probability', 'human_probability', 'actual_class']].to_dict(
+    # Handle NaN values
+    result = bots[['username', 'confidence', 'bot_probability', 'human_probability', 'actual_class']].fillna(0).to_dict(
         orient='records')
+    return result
 
 
 @app.get("/api/top-humans")
 def get_top_humans(limit: int = 20):
     humans = predictions[predictions['predicted_class'] == 'Human'].sort_values('confidence', ascending=False).head(
         limit)
-    return humans[['username', 'confidence', 'bot_probability', 'human_probability', 'actual_class']].to_dict(
-        orient='records')
+    # Handle NaN values
+    result = humans[['username', 'confidence', 'bot_probability', 'human_probability', 'actual_class']].fillna(
+        0).to_dict(orient='records')
+    return result
 
 
 @app.get("/api/uncertain")
 def get_uncertain(limit: int = 20):
     uncertain = predictions.iloc[(predictions['confidence'] - 50).abs().argsort()].head(limit)
-    return uncertain[
-        ['username', 'predicted_class', 'confidence', 'bot_probability', 'human_probability', 'actual_class']].to_dict(
-        orient='records')
+    # Handle NaN values
+    result = uncertain[
+        ['username', 'predicted_class', 'confidence', 'bot_probability', 'human_probability', 'actual_class']].fillna(
+        0).to_dict(orient='records')
+    return result
+
+
+# Bonus: Get prediction for specific user
+@app.get("/api/user/{username}")
+def get_user_prediction(username: str):
+    user_data = predictions[predictions['username'] == username]
+    if len(user_data) == 0:
+        return {"error": "User not found"}
+
+    return user_data.fillna(0).to_dict(orient='records')
+
+
+# Bonus: Summary statistics
+@app.get("/api/summary")
+def get_summary():
+    return {
+        "total_predictions": len(predictions),
+        "bots": {
+            "count": int((predictions['predicted_class'] == 'Bot').sum()),
+            "avg_confidence": float(predictions[predictions['predicted_class'] == 'Bot']['confidence'].mean()),
+            "min_confidence": float(predictions[predictions['predicted_class'] == 'Bot']['confidence'].min()),
+            "max_confidence": float(predictions[predictions['predicted_class'] == 'Bot']['confidence'].max())
+        },
+        "humans": {
+            "count": int((predictions['predicted_class'] == 'Human').sum()),
+            "avg_confidence": float(predictions[predictions['predicted_class'] == 'Human']['confidence'].mean()),
+            "min_confidence": float(predictions[predictions['predicted_class'] == 'Human']['confidence'].min()),
+            "max_confidence": float(predictions[predictions['predicted_class'] == 'Human']['confidence'].max())
+        }
+    }
