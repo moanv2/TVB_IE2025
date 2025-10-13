@@ -1,10 +1,10 @@
 # 🤖 BotHunter - AI-Powered Bot Detection Platform
 
-> **Classify. Segment. Flag.** - Identify and analyze bot accounts on social media platforms to protect your revenue and optimize marketing spend.
+> **Classify. Segment. Flag.** - Identify and analyze bot accounts on x (twitter) to protect your revenue and optimize marketing spend.
 
 ## 🎯 Overview
 
-BotHunter is an advanced bot detection platform designed to help businesses identify fake accounts, optimize marketing budgets, and understand their true customer base. Using machine learning algorithms, BotHunter analyzes user behavior patterns to distinguish between real users and automated bots with high accuracy.
+BotHunter is an bot detection platform designed to help businesses identify fake accounts, optimize marketing budgets, and understand their true customer base. Using machine learning algorithms, BotHunter analyzes user behavior patterns to distinguish between real users and automated bots with high accuracy.
 
 ### 💡 Key Features
 
@@ -33,6 +33,3 @@ BotHunter is an advanced bot detection platform designed to help businesses iden
 - Python 3.11
 - Git
 - requirements.txt
-
-### Frontend Setup
-```bash
